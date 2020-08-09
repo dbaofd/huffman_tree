@@ -25,5 +25,21 @@ int main(int argc, const char *argv[])
     FormHuffmanTree(huffman_node, count, node_array);
     GenerateHuffmanCode(huffman_node, count, huffman_code);
     DisplayCompressedCode(str, huffman_code, count, node_array);
+    if(p1!=NULL){
+        free(p1);
+        p1=NULL;
+    }
+    if(node_array!=NULL){
+        free(node_array);
+        node_array=NULL;
+    }
+    if(huffman_node!=NULL){
+        free(huffman_node);
+        huffman_node=NULL;
+    }
+    if(huffman_code!=NULL){
+        free(huffman_code);
+        huffman_code=NULL;
+    }
     return 0;
 }
