@@ -54,8 +54,8 @@ int GetNumberOfNodesInLinkedList(CharacterNode *p){
     int count=0;
     while (p != NULL)
     {
-       count++; //Compute the total number of Huffman tree.
-       p = p->next;
+        count++; //Compute the total number of Huffman tree.
+        p = p->next;
     }
     return count;
 }
@@ -77,15 +77,15 @@ void BubbleSort(CharacterNode node_array[], int count){
     int i,j;
     CharacterNode temp;
     for (i = 0; i < count - 1; i++) //Bubble sorting
-    for (j = 0; j < count - i - 1; j++)
-    {
-        if (node_array[j].weight > node_array[j + 1].weight)
+        for (j = 0; j < count - i - 1; j++)
         {
-            temp = node_array[j];
-            node_array[j] = node_array[j + 1];
-            node_array[j + 1] = temp;
+            if (node_array[j].weight > node_array[j + 1].weight)
+            {
+                temp = node_array[j];
+                node_array[j] = node_array[j + 1];
+                node_array[j + 1] = temp;
+            }
         }
-    }
 }
 //Form Hauffman tree
 void FormHuffmanTree(HuffmanNode node[], int n, CharacterNode node_array[])
