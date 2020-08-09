@@ -6,7 +6,6 @@
 //  Copyright © 2020 dbaofd. All rights reserved.
 //
 #include "HUFFMANTREE.hpp"
-#include <string>
 
 int main(int argc, const char *argv[])
 {
