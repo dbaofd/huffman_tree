@@ -7,13 +7,94 @@
 //
 
 #include "HUFFMANTREE.hpp"
-void transHafftree(haffNode node[], int n, store Weight[]) //构造哈夫曼树
+
+//Compute the number of every character in a string.
+CharacterNode *CharacterStatistic(char str[])
+{
+    int i, j = 0, k, flag; //j: the number of the linked list node;flag:to mark if find the same character in the linked list.
+    CharacterNode *p1, *p2, *p3;
+    CharacterNode *head;
+    head = p1 = p2 = p3 = (CharacterNode *)malloc(sizeof(CharacterNode));
+    for (i = 0; i < strlen(str); i++)
+    {
+        if (i == 0) //If i=0，then assign the first character of string to this node.
+        {
+            head->ch = str[0];
+            head->weight = 0;
+            p1 = p2 = head;//p2 is the tail of the linked list.
+        }
+        flag = 0; //Reset flag.
+        p3 = head; //After each loop, reset p3.
+        //Traverse the linked list.
+        for (k = 0; k <= j; k++) //j is dynamic, j+1 is the current total number of nodes in linked list.
+        {
+            if (str[i] == p3->ch) //If the current character is the same with value of the linked list node. update the weight.
+            {
+                p3->weight++;
+                flag = 1; //Mark flag, to show the current character is found in linked list.
+                break;
+            }
+            p3 = p3->next;
+        }
+        if (flag == 0)//The current character is not found in the linked list, add a new node in the end of the linked list.
+        {
+            j++; //Add a node means total number of linked list plus one.
+            p1 = (CharacterNode *)malloc(sizeof(CharacterNode));
+            p1->ch = str[i];
+            p1->weight = 1;
+            p2->next = p1;
+            p2 = p1;//p2 is the tail of the linked list.
+        }
+    }
+    p1->next = NULL;
+    return head;
+}
+
+int GetNumberOfNodesInLinkedList(CharacterNode *p){
+    int count=0;
+    while (p != NULL)
+    {
+       count++; //Compute the total number of Huffman tree.
+       p = p->next;
+    }
+    return count;
+}
+
+CharacterNode  *TransformLinkedListToArray(CharacterNode *p, int count){
+    int i = 0;
+    CharacterNode *node = (CharacterNode *)malloc(sizeof(CharacterNode) * count); //Dynamic array.
+    while (p != NULL) //Assign linked list value to array.
+    {
+        node[i].weight = p->weight;
+        node[i].ch = p->ch;
+        i++;
+        p = p->next;
+    }
+    return node;
+}
+
+void BubbleSort(CharacterNode node_array[], int count){
+    int i,j;
+    CharacterNode temp;
+    for (i = 0; i < count - 1; i++) //Bubble sorting
+    for (j = 0; j < count - i - 1; j++)
+    {
+        if (node_array[j].weight > node_array[j + 1].weight)
+        {
+            temp = node_array[j];
+            node_array[j] = node_array[j + 1];
+            node_array[j + 1] = temp;
+        }
+    }
+}
+//Form Hauffman tree
+void FormHuffmanTree(HuffmanNode node[], int n, CharacterNode node_array[])
 {
     int i, j, m1, m2, x1, x2;
-    for (i = 0; i < 2 * n - 1; i++) //初始化所有结点,n个叶节点会早就2*n-1个节点的哈夫曼树
+    for (i = 0; i < 2 * n - 1; i++) //Initialize all the nodes, a Hauffman tree with 2*n-1 nodes will be formed based on n leaf nodes. Also, the size of node array is 2*n-1.
     {
         if (i < n)
-            node[i].weight = Weight[i].weight;
+            node[i].weight = node_array[i].weight;
         else
             node[i].weight = 0;
         node[i].parent = 0;
@@ -21,12 +102,11 @@ void transHafftree(haffNode node[], int n, store Weight[]) //构造哈夫曼树
         node[i].leftchild = -1;
         node[i].rightchild = -1;
     }
-    for (i = 0; i < n - 1; i++) //构建哈夫曼树
+    for (i = 0; i < n - 1; i++) //Strat to form a Hauffman tree
     {
-
-        m1 = m2 = Maxvalue; //m1,m2,x1,x2需要放在循环里面，每次一个循环都要重新赋值
+        m1 = m2 = MAX_WEIGHT_VALUE; //m1,m2,x1,x2 need to be reset before each loop starts.
         x1 = x2 = 0;
-        for (j = i; j < n + i; j++) //在所有所有已知权重的节点中找到两个最小的，由于进行过冒泡排序，每次从i开始也行
+        for (j = i; j < n + i; j++)
         {
             if (node[j].weight < m1 && node[j].flag == 0)
             {
@@ -50,88 +130,57 @@ void transHafftree(haffNode node[], int n, store Weight[]) //构造哈夫曼树
         node[n + i].weight = node[x1].weight + node[x2].weight;
     }
 }
-void transHaffcode(haffNode node[], int n, haffCode code[]) //求出每个字符的哈夫曼码
+
+//Compute Huffman code for each character
+void GenerateHuffmanCode(HuffmanNode node[], int n, HuffmanCode code[])
 {
-    haffCode CODE; //用来暂时存放某个叶节点的编码
+    HuffmanCode mycode;
     int i, j, child, parent;
-    for (i = 0; i < n; i++) //叶节点就是哈弗曼数组的前n个
+    for (i = 0; i < n; i++) //the first n elements in Huffman array are leaf nodes.
     {
         child = i;
         parent = node[child].parent;
-        CODE.start = 0;
-        CODE.weight = node[i].weight;
+        mycode.start = 0;
+        mycode.weight = node[i].weight;
         while (parent != 0)
         {
             if (node[parent].leftchild == child)
-                CODE.codebit[CODE.start] = 0;
+                mycode.codevalue[mycode.start] = 0;
             else if (node[parent].rightchild == child)
-                CODE.codebit[CODE.start] = 1;
-            CODE.start++;
+                mycode.codevalue[mycode.start] = 1;
+            mycode.start++;
             child = parent;
             parent = node[child].parent;
         }
-        code[i].weight = CODE.weight;
-        code[i].start = CODE.start;
-        for (j = 0; j < CODE.start; j++)
+        code[i].weight = mycode.weight;
+        code[i].start = mycode.start;
+        for (j = 0; j < mycode.start; j++)
         {
-            code[i].codebit[CODE.start - j - 1] = CODE.codebit[j]; //CODE.start-j-1在这里是有说法的，因为是start个parent，所以下标最大为S-1
-                                                                   /*Test cout << code[i].codebit[CODE.start-j-1];*/
-        }                                                           //将原始的code调换左右的顺序
-                                                                   /*Test for (j = 0; j < code[i].start; j++)
-        cout << code[i].codebit[j];*/
-    }
-}
-store *head;
-store *returnTr(char str[]) //统计字符串中各个字符的个数
-{
-    int i, j = 0, k, flag; //j:链表节点的个数;flag:标记是否在节点的数据中找到相同的字符
-    store *p1, *p2, *p3;
-    head = p1 = p2 = p3 = (struct store *)malloc(sizeof(struct store));
-    for (i = 0; i < strlen(str); i++)
-    {
-        if (i == 0) //i=0时，将字符串的首字符复制给链表头节点的ch
-        {
-            head->ch = str[0];
-            head->weight = 0; //权值先初始化，这里既然出现了一次这个字符，权值为何是0？是由于下面i=0时权值还是会自加一次
-            p1 = p2 = head;      //head刚刚得到了数据赋值，将其数据给p1，p2
-        }
-        flag = 0;                 //由于字符串中每个字符都要进行链表的遍历比对，所以这个flag每次作用结束都要重新归零，方便下一个字符的标记
-        p3 = head;                 //由于是链表遍历，每一次遍历结束后p3的数据都会发生变化，所以每次遍历开始重置p3数据
-        for (k = 0; k <= j; k++) //j在这里是动态变化的，j+1是节点数量，遍历就是要访问每个节点
-        {
-            if (str[i] == p3->ch) //如果字符串中的字符和链表当中的ch有一致的话，该节点的权值自加
-            {
-                p3->weight++;
-                flag = 1; //标记在链表节点的ch中找到一样的
-                break;
-            }
-            p3 = p3->next;
-        }
-        if (flag == 0)
-        {
-            j++; //执行此语句说明这个字符是链表中没有的数据，所以需要将其加入
-            p1 = (store *)malloc(sizeof(store));
-            p1->ch = str[i];
-            p1->weight = 1;
-            p2->next = p1;
-            p2 = p1;
+            code[i].codevalue[mycode.start - j - 1] = mycode.codevalue[j];
         }
     }
-    p1->next = NULL;
-    p1 = head;
-    return head;
 }
-void bottomCode(char str[], haffCode code[], int n, store Weight[]) //展示字符串被压缩后的补码
+
+//Show compressed code.
+void DisplayCompressedCode(char str[], HuffmanCode code[], int n, CharacterNode node_array[])
 {
     int i, j, k;
-    cout << "该字符串经过压缩后的补码如下" << endl;
+    cout << "ch  weight  code" << endl;
+    for (i = 0; i < n; i++)
+    {
+        cout << " " << node_array[i].ch << "    " << node_array[i].weight << "     ";
+        for (j = 0; j < code[i].start; j++)
+            cout << code[i].codevalue[j];
+        cout << endl;
+    }
+    cout << "Compressed code of string." << endl;
     for (i = 0; i < strlen(str); i++)
     {
         for (j = 0; j < n; j++)
-            if (str[i] == Weight[j].ch)
+            if (str[i] == node_array[j].ch)
             {
                 for (k = 0; k < code[j].start; k++)
-                    cout << code[j].codebit[k];
+                    cout << code[j].codevalue[k];
             }
     }
     cout << endl;

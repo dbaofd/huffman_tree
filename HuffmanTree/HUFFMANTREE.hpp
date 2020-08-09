@@ -13,17 +13,16 @@
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
-const int Maxvalue = 1000; //Maxium weught is 1000.
+const int MAX_WEIGHT_VALUE = 1000; //Maxium weught is 1000.
 //Encoding bit is not greater than 20, which means Huffman tree has less than 20 levels.
-const int Maxbit = 20;
-const int Maxnode = 100;   //Maxium nodes in Hauffman tree.
-struct store               //Data structure for storing characters and its weight.
+const int MAXBIT = 20;
+struct CharacterNode               //Data structure for storing characters and its weight.
 {
     char ch;
     int weight;
-    struct store *next;
+    struct CharacterNode *next;
 };
-struct haffNode //哈夫曼树节点数据构成
+struct HuffmanNode //Hauffman tree node data structure
 {
     int flag;
     int parent;
@@ -31,14 +30,18 @@ struct haffNode //哈夫曼树节点数据构成
     int leftchild;
     int rightchild;
 };
-struct haffCode //哈夫曼叶节点的编码存储结构
+struct HuffmanCode //Hauffman leaf node data structure.
 {
     int start;
     int weight;
-    int codebit[Maxbit];
+    int codevalue[MAXBIT];
 };
-void transHafftree(haffNode node[], int n, store Weight[]);
-void transHaffcode(haffNode node[], int n, haffCode code[]);
-store *returnTr(char str[]);
-void bottomCode(char str[], haffCode code[], int n, store Weight[]);
+
+CharacterNode *CharacterStatistic(char str[]);
+int GetNumberOfNodesInLinkedList(CharacterNode *p1);
+CharacterNode *TransformLinkedListToArray(CharacterNode *p, int count);
+void BubbleSort(CharacterNode node[],int count);
+void FormHuffmanTree(HuffmanNode node[], int n, CharacterNode Weight[]);
+void GenerateHuffmanCode(HuffmanNode node[], int n, HuffmanCode code[]);
+void DisplayCompressedCode(char str[], HuffmanCode code[], int n, CharacterNode Weight[]);
 #endif /* HUFFMANTREE_hpp */
