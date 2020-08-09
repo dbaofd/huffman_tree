@@ -21,9 +21,9 @@ CharacterNode *CharacterStatistic(char str[])
         {
             head->ch = str[0];
             head->weight = 0;
-            p1 = p2 = head;//p2 is the tail of the linked list.
+            p1 = p2 = head; //p2 is the tail of the linked list.
         }
-        flag = 0; //Reset flag.
+        flag = 0;  //Reset flag.
         p3 = head; //After each loop, reset p3.
         //Traverse the linked list.
         for (k = 0; k <= j; k++) //j is dynamic, j+1 is the current total number of nodes in linked list.
@@ -36,22 +36,23 @@ CharacterNode *CharacterStatistic(char str[])
             }
             p3 = p3->next;
         }
-        if (flag == 0)//The current character is not found in the linked list, add a new node in the end of the linked list.
+        if (flag == 0) //The current character is not found in the linked list, add a new node in the end of the linked list.
         {
             j++; //Add a node means total number of linked list plus one.
             p1 = (CharacterNode *)malloc(sizeof(CharacterNode));
             p1->ch = str[i];
             p1->weight = 1;
             p2->next = p1;
-            p2 = p1;//p2 is the tail of the linked list.
+            p2 = p1; //p2 is the tail of the linked list.
         }
     }
     p1->next = NULL;
     return head;
 }
 
-int GetNumberOfNodesInLinkedList(CharacterNode *p){
-    int count=0;
+int GetNumberOfNodesInLinkedList(CharacterNode *p)
+{
+    int count = 0;
     while (p != NULL)
     {
         count++; //Compute the total number of Huffman tree.
@@ -60,10 +61,11 @@ int GetNumberOfNodesInLinkedList(CharacterNode *p){
     return count;
 }
 
-CharacterNode  *TransformLinkedListToArray(CharacterNode *p, int count){
+CharacterNode *TransformLinkedListToArray(CharacterNode *p, int count)
+{
     int i = 0;
     CharacterNode *node = (CharacterNode *)malloc(sizeof(CharacterNode) * count); //Dynamic array.
-    while (p != NULL) //Assign linked list value to array.
+    while (p != NULL)                                                             //Assign linked list value to array.
     {
         node[i].weight = p->weight;
         node[i].ch = p->ch;
@@ -73,8 +75,9 @@ CharacterNode  *TransformLinkedListToArray(CharacterNode *p, int count){
     return node;
 }
 
-void BubbleSort(CharacterNode node_array[], int count){
-    int i,j;
+void BubbleSort(CharacterNode node_array[], int count)
+{
+    int i, j;
     CharacterNode temp;
     for (i = 0; i < count - 1; i++) //Bubble sorting
         for (j = 0; j < count - i - 1; j++)
